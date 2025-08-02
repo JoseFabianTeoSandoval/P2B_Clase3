@@ -71,6 +71,7 @@ public class Main {
         System.out.println("6. Aplicar descuento a pedido");
         System.out.println("7. Salir");
         System.out.print("Seleccione una opción: ");
+
     }
 
     private static void mostrarInventario() {
