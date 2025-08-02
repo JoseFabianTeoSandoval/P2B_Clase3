@@ -1,9 +1,11 @@
 package com.negocio.models;
 
+import java.sql.PreparedStatement;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
+
+import com.negocio.db.DatabaseManager;
+
 import java.util.HashMap;
 
 public class Pedido {
@@ -29,7 +31,8 @@ public class Pedido {
         calcularTotal();
     }
 
-    // ERROR 5: Cálculo incorrecto del total (suma precios sin considerar cantidades)
+    // ERROR 5: Cálculo incorrecto del total (suma precios sin considerar
+    // cantidades)
     private void calcularTotal() {
         total = 0;
         for (Map.Entry<Producto, Integer> entry : productos.entrySet()) {
@@ -55,11 +58,25 @@ public class Pedido {
     }
 
     // Getters
-    public int getId() { return id; }
-    public Cliente getCliente() { return cliente; }
-    public Map<Producto, Integer> getProductos() { return productos; }
-    public LocalDateTime getFecha() { return fecha; }
-    public double getTotal() { return total; }
+    public int getId() {
+        return id;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public Map<Producto, Integer> getProductos() {
+        return productos;
+    }
+
+    public LocalDateTime getFecha() {
+        return fecha;
+    }
+
+    public double getTotal() {
+        return total;
+    }
 
     @Override
     public String toString() {
@@ -70,5 +87,16 @@ public class Pedido {
                 ", fecha=" + fecha +
                 ", total=" + total +
                 '}';
+    }
+
+    public void save() {
+        DatabaseManager conn = new DatabaseManager();
+        String query = DatabaseManager.writeQuery(this);
+        try {
+            PreparedStatement statement = conn.getConnection().prepareStatement(query);
+            statement.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("Error al guardar pedido: " + e.getMessage());
+        }
     }
 }

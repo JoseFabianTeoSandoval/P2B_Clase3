@@ -23,7 +23,7 @@ public class DatabaseManager {
             stmt.execute("""
                 CREATE TABLE IF NOT EXISTS productos (
                     id INTEGER PRIMARY KEY,
-                    nombre TEXT NOT NULL,
+                    nombre TEXT NOT NULL UNIQUE,
                     precio REAL NOT NULL,
                     stock INTEGER NOT NULL
                 )
@@ -43,7 +43,7 @@ public class DatabaseManager {
                 CREATE TABLE IF NOT EXISTS pedidos (
                     id INTEGER PRIMARY KEY,
                     cliente_id INTEGER,
-                    fecha TEXT,
+                    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     total REAL,
                     FOREIGN KEY (cliente_id) REFERENCES clientes(id)
                 )
@@ -74,5 +74,22 @@ public class DatabaseManager {
         } catch (SQLException e) {
             System.err.println("Error al cerrar conexión: " + e.getMessage());
         }
+    }
+    public static String writeQuery(Object data){
+        try {
+            connection = getConnection();
+            String query = "INSERT INTO " + data.getClass().getSimpleName() + " VALUES (";
+            for (int i = 0; i < data.getClass().getDeclaredFields().length; i++) {
+                query += "?";
+                if (i < data.getClass().getDeclaredFields().length - 1) {
+                    query += ", ";
+                }
+            }
+            query += ")";
+            return query;
+        } catch (Exception e) {
+            System.err.println("Error al guardar datos: " + e.getMessage());
+        }
+        return null;
     }
 }
